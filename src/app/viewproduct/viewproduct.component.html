@@ -1,0 +1,206 @@
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<div class="back" *ngIf="!isLoading">
+    <mat-card>
+        <mat-card class="card-container" >
+            <mat-spinner *ngIf="isLoading"></mat-spinner>
+            <mat-card-header>
+                <mat-card-title>
+                    <h1>Product Name : {{product.name}}</h1>
+                    Price: <strong> {{product.price}} ₹</strong></mat-card-title>
+            </mat-card-header>
+             <div  class="card-container card side back">
+                <img mat-card-image [src]="product.imagePath" alt="Photo of a Shiba Inu">
+             </div>
+            <mat-card-content>
+                <div>
+                    <h2>Description : {{product.description}}</h2>
+                    <section>
+                        <a class="a1" (click)="showButton()">
+                        <h1>Category Info</h1>
+                        </a>
+                        <div *ngIf="show1" align="center"  style="align-content: center; background-color: rgba(137,188,255,0.5); color: #0066cc;  font-size: 25px">
+                        Main: {{product.main_category}}<br>
+                        Sub: {{product.sub_category}}<br>
+                        </div>
+                    </section>
+                    <br>
+                    <section>
+                        <a class="a1" (click)="showButton2()">
+                        <h1>Owner Info</h1>
+                        </a>
+                        <div *ngIf="show2" align="center" style="background-color: rgba(137,188,255,0.5); color: #0066cc;  font-size: 25px">
+                        Owner Name: {{product.owner_name}}<br>
+                        City:  {{product.city}}<br>
+                        State: {{product.state}}<br>
+                        </div>
+                    </section>
+                    <br>
+                    <section>
+                        <a class="a1" (click)="showButton3()" >
+                        <h1>Other Info</h1>
+                        </a>
+                        <div *ngIf="show3" align="center" style="background-color: rgba(137,188,255,0.5); color: #0066cc ; font-size: 25px">
+
+                        Rating: {{product.rating}}<br>
+                        </div>
+                    </section>
+                </div>
+                </mat-card-content>
+
+            <mat-spinner *ngIf="isLoading"></mat-spinner>
+        </mat-card>
+
+
+        <mat-card class="card-container">
+            <mat-spinner *ngIf="isLoading"></mat-spinner>
+            <h1>Seller description</h1>
+            <mat-card-header>
+                <div mat-card-avatar class="seller-image"></div>
+                <mat-card-title>Seller name: {{product.owner_name}}</mat-card-title>
+                <mat-card-subtitle (click)="doStuff()">View Profile</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-actions>
+                <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading && userIsAuthenticated" (click)="book()">Book product</button>
+                <button mat-raised-button routerLink="/chatpage" color="primary"  type="button" *ngIf="!isLoading && userIsAuthenticated"><mat-icon>chat</mat-icon>&nbsp;&nbsp;Chat</button>
+                <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading && userIsAuthenticated && product.owner_id != userid" (click)="addToWishlist()">Add to Wishlist</button>
+                <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading && userIsAuthenticated && product.owner_id == userid" (click)="showUpdateCard()">Update this product</button>
+                <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading && userIsAuthenticated && product.owner_id == userid" (click)="deleteProduct(product)">Delete this product</button>
+                <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading && userIsAuthenticated && product.owner_id != userid" (click)="sendEmailFlagUpdate()">Send an email</button>
+              </mat-card-actions>
+          <mat-spinner *ngIf="isLoading"></mat-spinner>
+        </mat-card>
+
+
+
+
+        <mat-card id="myitem" *ngIf="showUpdateCardField">
+          <!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
+          <form [formGroup]="form" (submit)="onUpload()"  >
+            <h1>Upload items</h1>
+            <div style="margin-left: 10px ; margin-right: 10px ; " class="form-group">
+            <div>
+              <mat-form-field>
+                <mat-label >Product Name</mat-label>
+                <input matInput name="name" formControlName="name" type="text" placeholder="Enter the name of the item">
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Expected price</mat-label>
+                <input matInput name="price" formControlName="price" type="text" placeholder="Enter the expected price" >
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Description</mat-label>
+                <input matInput name="description" formControlName="description" type="text" placeholder="Enter the description of the item" >
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>City</mat-label>
+                <input matInput name="city" formControlName="city" type="text" placeholder="Enter the city">
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>State</mat-label>
+                <input matInput name="state" formControlName="state" type="text" placeholder="Enter the state">
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+
+                <mat-select placeholder="Main Category" name="main_category" formControlName="main_category" (selectionChange)="findSUB()">
+
+                  <mat-option *ngFor="let cas of cat_main" [value]="cas">
+                    {{cas}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+             </div>
+
+            <div>
+              <mat-form-field>
+
+                <mat-select placeholder="Sub Category" name="sub_category" formControlName="sub_category">
+                  <mat-option *ngFor="let cas of cat_sub" [value]="cas">
+                    {{cas}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+             </div>
+
+            <!-- <div style="color: #585d61; margin-bottom: 20px;" >
+
+                Product image
+                <input name="productimage" ngModel type="file" #mobInput="ngModel" required>
+
+            </div> -->
+            <div>
+              <button mat-stroked-button type="button" (click)="filePicker.click()">Pick image</button>
+              <input type="file" #filePicker (change)="onImagePicked($event)">
+            </div>
+            <div class="image-preview" *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid">
+              <img [src]="imagePreview" [alt]="form.value.image">
+            </div>
+
+            <div>
+              <button mat-raised-button color="primary" type="submit" >Upload for rent</button>
+            </div>
+            <!-- <mat-spinner *ngIf="isLoading"></mat-spinner>
+            </div>-->
+            </div>
+          </form>
+        </mat-card>
+
+
+
+<!--***************************************************************************************************************************-->
+
+<mat-card id="myitem" *ngIf="showEmailFormField">
+  <!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
+  <form [formGroup]="emailForm" (submit)="sendEmail()"  >
+    <h1>Send an email</h1>
+    <div style="margin-left: 10px ; margin-right: 10px ; " class="form-group">
+      <div>
+        <mat-form-field>
+          <mat-label >Email text</mat-label>
+          <input matInput name="emailText" formControlName="emailText" type="text" placeholder="Communicate...">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <button mat-raised-button color="primary" type="submit" >Send mail</button>
+      </div>
+
+    </div>
+  </form>
+</mat-card>
+
+
+
+
+
+
+
+
+        <mat-card class="card-container">
+            <mat-card-header>
+                <mat-card-title>Comments and Reviews</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngFor="let cas of postcomments">
+                    <p>{{cas}}</p>
+                </div>
+                <div *ngIf="userIsAuthenticated">
+                    <div>
+                        <textarea [(ngModel)]="comment" style="width: 100%; margin-bottom: 10px; height:100px;" placeholder="Enter your comments"></textarea>
+                    </div>
+                        <button mat-raised-button color="primary" style="float:right;" type="button" (click)="post1()" style="margin-bottom: 5px;"><mat-icon>comment</mat-icon>&nbsp;&nbsp;Comment</button>
+                </div>
+
+            </mat-card-content>
+        </mat-card>
+    </mat-card>
+    </div>
